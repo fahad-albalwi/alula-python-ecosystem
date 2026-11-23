@@ -1,0 +1,47 @@
+
+name: AlUla Python Libraries Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test tools
+        run: python -m pip install --upgrade pip build pytest
+
+      - name: Install AlUla libraries
+        run: |
+          python -m pip install -e ./alula_cropwatch
+          python -m pip install -e ./alula_waterwise
+          python -m pip install -e ./alula_heritage
+
+      - name: Run tests
+        run: python -m pytest -q tests
+
+      - name: Build packages
+        run: |
+          python -m build ./alula_cropwatch
+          python -m build ./alula_waterwise
+          python -m build ./alula_heritage
+  
