@@ -36,8 +36,11 @@ jobs:
           python -m pip install -e ./alula_waterwise
           python -m pip install -e ./alula_heritage
 
+      
       - name: Run tests
-        run: python -m pytest -q tests
+        working-directory: /tmp
+        run: python -m pytest -q "$GITHUB_WORKSPACE/tests"
+
 
       - name: Build packages
         run: |
